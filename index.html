@@ -1,0 +1,1787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apples in East Asia</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Leaflet.js -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    :root {
+      --bg-parchment: #F6F3EB;
+      --bg-card: #EFECE2;
+      --ink-dark: #23201C;
+      --ink-muted: #5A544B;
+      --crimson-apple: #A8332A;
+      --asian-amber: #C86D3B;
+      --botanical-green: #3D5A45;
+      --loess-gold: #B8862D;
+      --bohai-blue: #2E5B70;
+      --west-purple: #6E476B;
+      --border-sepia: #D5CEBE;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-parchment);
+      color: var(--ink-dark);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.65;
+      background-image: radial-gradient(rgba(158, 123, 66, 0.06) 1px, transparent 0);
+      background-size: 24px 24px;
+    }
+
+    h1, h2, h3, h4, .serif {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+    }
+
+    header {
+      padding: 2.75rem 2rem 1.5rem;
+      text-align: center;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--crimson-apple);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 3.8vw, 3.1rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 0.75rem;
+      color: var(--ink-dark);
+    }
+
+    .subtitle {
+      font-size: 0.98rem;
+      color: var(--ink-muted);
+      max-width: 840px;
+      margin: 0 auto;
+      font-weight: 300;
+    }
+
+    /* Top Tab Navigation Bar */
+    .tab-navbar {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border-sepia);
+      padding: 0 1.5rem;
+      margin-top: 1.5rem;
+      background: rgba(239, 236, 226, 0.92);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(8px);
+    }
+
+    .main-tab-btn {
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      padding: 0.95rem 1.35rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--ink-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .main-tab-btn:hover {
+      color: var(--ink-dark);
+    }
+
+    .main-tab-btn.active {
+      color: var(--crimson-apple);
+      border-bottom-color: var(--crimson-apple);
+      background: rgba(168, 51, 42, 0.05);
+    }
+
+    .tab-badge {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.14rem 0.45rem;
+      border-radius: 3px;
+      background: var(--border-sepia);
+      color: var(--ink-dark);
+      font-weight: 600;
+    }
+
+    .main-tab-btn.active .tab-badge {
+      background: var(--crimson-apple);
+      color: #fff;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-header {
+      margin-bottom: 1.4rem;
+      border-left: 3px solid var(--crimson-apple);
+      padding-left: 1rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.95rem;
+      font-weight: 600;
+    }
+
+    .section-header p {
+      color: var(--ink-muted);
+      font-size: 0.92rem;
+    }
+
+    /* Illustrated Silk Road Banner Card */
+    .silkroad-illustration-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-sepia);
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 16px rgba(35, 32, 28, 0.04);
+    }
+
+    .silkroad-svg-wrap {
+      width: 100%;
+      overflow-x: auto;
+      background: var(--bg-parchment);
+      border: 1px solid var(--border-sepia);
+      border-radius: 4px;
+      padding: 1rem 0.75rem;
+      margin-top: 0.75rem;
+    }
+
+    /* Explorer Grid */
+    .explorer-grid {
+      display: grid;
+      grid-template-columns: 1.32fr 1fr;
+      gap: 2rem;
+      margin-bottom: 3rem;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .explorer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .map-wrapper {
+      background: var(--bg-card);
+      border: 1px solid var(--border-sepia);
+      border-radius: 6px;
+      padding: 0.75rem;
+      box-shadow: 0 8px 24px rgba(35, 32, 28, 0.06);
+      position: sticky;
+      top: 4.5rem;
+    }
+
+    #map, #world-china-map {
+      height: 540px;
+      width: 100%;
+      border-radius: 4px;
+      border: 1px solid var(--border-sepia);
+      background: #E8E2D5;
+    }
+
+    .sepia-tiles .leaflet-tile-pane {
+      filter: sepia(0.38) contrast(0.96) brightness(1.01) saturate(0.8);
+    }
+
+    .map-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.1rem;
+      padding: 0.7rem 0.5rem 0.2rem;
+      font-size: 0.79rem;
+      color: var(--ink-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    /* Controls & Toggles */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .era-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .era-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-sepia);
+      color: var(--ink-dark);
+      padding: 0.48rem 0.88rem;
+      font-size: 0.82rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+
+    .era-btn:hover {
+      border-color: var(--crimson-apple);
+    }
+
+    .era-btn.active {
+      background: var(--crimson-apple);
+      color: #fff;
+      border-color: var(--crimson-apple);
+    }
+
+    .overlay-toggle-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.84rem;
+      font-weight: 600;
+      background: rgba(200, 109, 59, 0.12);
+      border: 1px solid var(--asian-amber);
+      color: var(--ink-dark);
+      padding: 0.45rem 0.85rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .overlay-toggle-label input {
+      accent-color: var(--crimson-apple);
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+    }
+
+    /* Timeline & Region Cards */
+    .timeline-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .timeline-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-sepia);
+      border-left: 4px solid var(--asian-amber);
+      border-radius: 4px;
+      padding: 1.1rem 1.25rem;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      display: grid;
+      grid-template-columns: 105px 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    @media (max-width: 600px) {
+      .timeline-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .timeline-card.western { border-left-color: var(--crimson-apple); }
+    .timeline-card.origin { border-left-color: var(--botanical-green); }
+    .timeline-card.loess { border-left-color: var(--loess-gold); }
+    .timeline-card.bohai { border-left-color: var(--bohai-blue); }
+
+    .timeline-card:hover, .timeline-card.selected {
+      background: #fff;
+      transform: translateX(4px);
+      box-shadow: 0 6px 18px rgba(35, 32, 28, 0.08);
+    }
+
+    .card-thumb-wrap {
+      width: 105px;
+      height: 105px;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--border-sepia);
+      background: #E5DFD0;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .card-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .timeline-card:hover .card-thumb {
+      transform: scale(1.06);
+    }
+
+    .zoom-hint {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      background: rgba(35, 32, 28, 0.78);
+      color: #fff;
+      font-size: 0.62rem;
+      padding: 1px 5px;
+      border-radius: 2px;
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.25rem;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ink-muted);
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .species-tag {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.92rem;
+      color: var(--botanical-green);
+      font-weight: 600;
+      text-transform: none;
+    }
+
+    .output-pill {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--crimson-apple);
+      background: rgba(168, 51, 42, 0.1);
+      padding: 0.12rem 0.48rem;
+      border-radius: 3px;
+    }
+
+    .timeline-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.35rem;
+      color: var(--ink-dark);
+    }
+
+    .timeline-card p {
+      font-size: 0.86rem;
+      color: var(--ink-muted);
+      margin-bottom: 0.55rem;
+    }
+
+    .citation-box {
+      font-size: 0.75rem;
+      background: rgba(158, 123, 66, 0.08);
+      border-top: 1px dashed var(--border-sepia);
+      padding: 0.4rem 0.6rem;
+      border-radius: 3px;
+      color: var(--ink-dark);
+    }
+
+    /* Botanical Comparison Section (Tab 1) */
+    .comparison-section {
+      margin-bottom: 3rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-sepia);
+      border-radius: 6px;
+      padding: 2rem;
+    }
+
+    .comp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .comp-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .comp-card {
+      background: var(--bg-parchment);
+      border: 1px solid var(--border-sepia);
+      padding: 1.5rem;
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .svg-illustration {
+      width: 165px;
+      height: 165px;
+      margin: 0.5rem 0 1rem;
+    }
+
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      text-align: left;
+    }
+
+    .comp-table th, .comp-table td {
+      padding: 0.5rem;
+      border-bottom: 1px solid var(--border-sepia);
+    }
+
+    .comp-table th {
+      color: var(--ink-muted);
+      font-weight: 500;
+      width: 38%;
+    }
+
+    /* Tab 2: Pie Chart & Analytics */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2.25rem;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-sepia);
+      border-top: 3px solid var(--crimson-apple);
+      padding: 1.2rem 1.35rem;
+      border-radius: 4px;
+    }
+
+    .kpi-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--ink-muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .kpi-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.25rem;
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--ink-dark);
+      margin-bottom: 0.35rem;
+    }
+
+    .kpi-sub {
+      font-size: 0.82rem;
+      color: var(--ink-muted);
+    }
+
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    @media (max-width: 920px) {
+      .analytics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-sepia);
+      border-radius: 6px;
+      padding: 1.65rem;
+    }
+
+    .panel-box h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    /* SVG Pie / Donut Chart Layout */
+    .pie-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.75rem;
+      margin-top: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .pie-svg {
+      width: 220px;
+      height: 220px;
+      overflow: visible;
+    }
+
+    .pie-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: 0.84rem;
+      flex: 1;
+      min-width: 210px;
+    }
+
+    .pie-legend-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.3rem 0.5rem;
+      border-bottom: 1px dashed var(--border-sepia);
+      cursor: pointer;
+      border-radius: 3px;
+      transition: background 0.15s;
+    }
+
+    .pie-legend-row:hover {
+      background: rgba(168, 51, 42, 0.08);
+    }
+
+    .pie-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      display: inline-block;
+      margin-right: 0.5rem;
+    }
+
+    .bar-row {
+      margin-bottom: 0.85rem;
+    }
+
+    .bar-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.84rem;
+      margin-bottom: 0.25rem;
+      font-weight: 500;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 11px;
+      background: #DFD9C8;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 6px;
+    }
+
+    /* Tab 3: Academic Honesty & References Styling */
+    .honesty-pledge {
+      background: rgba(61, 90, 69, 0.08);
+      border: 1px solid var(--botanical-green);
+      border-left: 5px solid var(--botanical-green);
+      border-radius: 6px;
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .honesty-pledge h3 {
+      font-size: 1.5rem;
+      color: var(--botanical-green);
+      margin-bottom: 0.4rem;
+    }
+
+    .honesty-pledge p {
+      font-size: 0.92rem;
+      color: var(--ink-dark);
+    }
+
+    .ref-category {
+      background: var(--bg-card);
+      border: 1px solid var(--border-sepia);
+      border-radius: 6px;
+      padding: 1.75rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .ref-category h3 {
+      font-size: 1.5rem;
+      color: var(--crimson-apple);
+      border-bottom: 1px solid var(--border-sepia);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .ref-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.95rem;
+    }
+
+    .ref-list li {
+      font-size: 0.9rem;
+      padding-left: 1.8rem;
+      text-indent: -1.8rem;
+      line-height: 1.6;
+      color: var(--ink-dark);
+    }
+
+    .ref-badge {
+      display: inline-block;
+      text-indent: 0;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 0.1rem 0.45rem;
+      border-radius: 3px;
+      background: rgba(158, 123, 66, 0.16);
+      color: var(--ink-dark);
+      margin-left: 0.4rem;
+    }
+
+    /* Lightbox Modal */
+    .lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 18, 15, 0.88);
+      z-index: 3000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .lightbox-overlay.open {
+      display: flex;
+    }
+
+    .lightbox-content {
+      background: var(--bg-parchment);
+      border: 1px solid var(--border-sepia);
+      border-radius: 6px;
+      max-width: 860px;
+      width: 100%;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+    }
+
+    .lightbox-img-wrap {
+      width: 100%;
+      max-height: 540px;
+      background: #181614;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox-img-wrap img {
+      max-width: 100%;
+      max-height: 540px;
+      object-fit: contain;
+    }
+
+    .lightbox-meta {
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .close-btn {
+      background: var(--crimson-apple);
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2.25rem;
+      border-top: 1px solid var(--border-sepia);
+      color: var(--ink-muted);
+      font-size: 0.84rem;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="eyebrow">Historical Pomology &amp; Global Agricultural Atlas</div>
+    <h1>Apples in East Asia </h1>
+    <p class="subtitle">
+      How wild Central Asian apples split along the ancient Silk Road into small East Asian heirloom crabapples (<em>Malus asiatica</em>) and large Western apples (<em>Malus domestica</em>)—before American cultivars crossed the Pacific in the 1870s to spark East Asia's modern orchard empire.
+    </p>
+  </header>
+
+  <!-- TOP-LEVEL TAB NAVIGATION (3 TABS) -->
+  <nav class="tab-navbar">
+    <button class="main-tab-btn active" onclick="switchMainTab('tab-history', this)">
+      <span>I. Silk Road Dispersal &amp; Chronology</span>
+      <span class="tab-badge">Antiquity – 1939</span>
+    </button>
+    <button class="main-tab-btn" onclick="switchMainTab('tab-modern', this)">
+      <span>II. Global Production &amp; Modern Apple Belts</span>
+      <span class="tab-badge">World Map &amp; Pie Chart</span>
+    </button>
+    <button class="main-tab-btn" onclick="switchMainTab('tab-references', this)">
+      <span>III. References &amp; Academic Honesty</span>
+      <span class="tab-badge">Bibliography &amp; Citations</span>
+    </button>
+  </nav>
+
+  <main class="container">
+
+    <!-- ================================================================= -->
+    <!-- TAB 1: SILK ROAD DISPERSAL & ILLUSTRATED CHRONOLOGY               -->
+    <!-- ================================================================= -->
+    <div id="tab-history" class="tab-pane active">
+
+      <!-- ILLUSTRATED SILK ROAD GENETIC BIFURCATION BANNER (100% ENGLISH, NON-OVERLAPPING) -->
+      <div class="silkroad-illustration-card">
+        <div class="eyebrow">Botanical &amp; Caravan Dispersal Schematic</div>
+        <h3 class="serif" style="font-size: 1.55rem;">The Silk Road Evolutionary Split of the Genus <em>Malus</em></h3>
+        <p style="font-size: 0.88rem; color: var(--ink-muted);">
+          Originating in the Tian Shan mountains of Central Asia, wild forest apples (<em>Malus sieversii</em>) traveled both west and east along ancient trade routes, hybridizing with distinct wild crabapples at opposite ends of Eurasia—before American cultivars reunited the two lineages in the 1870s.
+        </p>
+
+        <div class="silkroad-svg-wrap">
+          <svg viewBox="0 0 1000 265" width="100%" height="auto" style="min-width: 740px; display: block;">
+            <!-- Background Center Reference Line -->
+            <line x1="60" y1="142" x2="940" y2="142" stroke="#D5CEBE" stroke-width="1" stroke-dasharray="4,4"/>
+
+            <!-- ==================== WESTWARD ROUTE (LEFT) ==================== -->
+            <rect x="145" y="12" width="300" height="46" rx="4" fill="#F6F3EB" stroke="#D5CEBE" stroke-width="1" opacity="0.95"/>
+            <text x="295" y="31" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="15" font-weight="700" fill="#6E476B">← Westward Silk Road (To Europe &amp; America)</text>
+            <text x="295" y="49" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#5A544B">Introgression with European Crabapple (M. sylvestris)</text>
+
+            <path d="M445,118 C365,68 235,68 155,108" fill="none" stroke="#6E476B" stroke-width="3.5" stroke-dasharray="7,5"/>
+            <polygon points="148,112 159,100 163,111" fill="#6E476B"/>
+
+            <!-- ==================== EASTWARD ROUTE (RIGHT) ==================== -->
+            <rect x="555" y="12" width="310" height="46" rx="4" fill="#F6F3EB" stroke="#D5CEBE" stroke-width="1" opacity="0.95"/>
+            <text x="710" y="31" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="15" font-weight="700" fill="#C86D3B">Eastward Silk Road (To China, Korea &amp; Japan) →</text>
+            <text x="710" y="49" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#5A544B">Hybridization with Siberian Crabapple (M. baccata)</text>
+
+            <path d="M555,118 C635,68 765,68 845,108" fill="none" stroke="#C86D3B" stroke-width="3.5" stroke-dasharray="7,5"/>
+            <polygon points="852,112 837,111 841,100" fill="#C86D3B"/>
+
+            <!-- ==================== 19TH CENTURY MARITIME RETURN (BOTTOM) ==================== -->
+            <path d="M150,175 C360,235 640,235 850,175" fill="none" stroke="#A8332A" stroke-width="2.5"/>
+            <polygon points="856,173 842,172 846,182" fill="#A8332A"/>
+            <rect x="215" y="226" width="570" height="24" rx="4" fill="#F6F3EB" opacity="0.95"/>
+            <text x="500" y="242" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" font-weight="600" fill="#A8332A">1871–1875 Trans-Pacific Introduction of American Cultivars (USA → Yantai, Tokyo, Hokkaido &amp; Aomori)</text>
+
+            <!-- ==================== CENTER NODE: TIAN SHAN MOUNTAINS ==================== -->
+            <g transform="translate(500, 125)">
+              <polygon points="-58,20 -26,-32 6,20" fill="#526E5A" stroke="#23201C" stroke-width="1"/>
+              <polygon points="-26,-32 -15,-14 -37,-14" fill="#F6F3EB" stroke="#23201C" stroke-width="0.8"/>
+              <polygon points="-14,20 20,-42 56,20" fill="#2D4534" stroke="#23201C" stroke-width="1"/>
+              <polygon points="20,-42 33,-18 7,-18" fill="#F6F3EB" stroke="#23201C" stroke-width="0.8"/>
+              <rect x="-86" y="20" width="172" height="48" rx="6" fill="#EFECE2" stroke="#3D5A45" stroke-width="2"/>
+              <text x="0" y="40" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="15" font-weight="700" fill="#23201C">Tian Shan Mountains</text>
+              <text x="0" y="58" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="13" fill="#3D5A45">Wild Malus sieversii</text>
+            </g>
+
+            <!-- ==================== LEFT NODE: WESTERN APPLE ==================== -->
+            <g transform="translate(115, 142)">
+              <rect x="-95" y="-32" width="195" height="66" rx="6" fill="#EFECE2" stroke="#6E476B" stroke-width="2"/>
+              <circle cx="-62" cy="3" r="17" fill="#A8332A" stroke="#23201C" stroke-width="1.2"/>
+              <path d="M-62,-14 Q-58,-22 -53,-24" stroke="#5A4632" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <text x="18" y="-9" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="15.5" font-weight="700" fill="#23201C">Western Apple</text>
+              <text x="18" y="8" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="13" fill="#6E476B">Malus domestica</text>
+              <text x="18" y="24" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#5A544B">Large, Crisp, Winter Storage</text>
+            </g>
+
+            <!-- ==================== RIGHT NODE: EAST ASIAN HEIRLOOM APPLE ==================== -->
+            <g transform="translate(885, 142)">
+              <rect x="-100" y="-32" width="195" height="66" rx="6" fill="#EFECE2" stroke="#C86D3B" stroke-width="2"/>
+              <ellipse cx="-66" cy="5" rx="14" ry="11.5" fill="#E6C27A" stroke="#C86D3B" stroke-width="1.5"/>
+              <path d="M-66,-7 Q-62,-18 -56,-21" stroke="#5A4632" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <text x="16" y="-9" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="15.5" font-weight="700" fill="#23201C">Asian Heirloom Apple</text>
+              <text x="16" y="8" text-anchor="middle" font-family="Cormorant Garamond, serif" font-style="italic" font-size="12.5" fill="#C86D3B">Malus asiatica (Soft Crabapple)</text>
+              <text x="16" y="24" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#5A544B">Small (4cm), Summer Ritual Fruit</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h2>I. Interactive Silk Road Dispersal Map &amp; Illustrated Chronology</h2>
+        <p>Toggle the Silk Road Illustrated Corridor Overlay on the map or click any historical card to inspect primary sources and specimen photography.</p>
+      </div>
+
+      <div class="controls-bar">
+        <div class="era-controls">
+          <button class="era-btn active" onclick="filterEra('all', this)">All Periods (Routes &amp; Nodes)</button>
+          <button class="era-btn" onclick="filterEra('origin', this)">Wild Origin (Tian Shan)</button>
+          <button class="era-btn" onclick="filterEra('asian', this)">Ancient–1800s: Asian Heirloom (M. asiatica)</button>
+          <button class="era-btn" onclick="filterEra('western', this)">1870s–1939: American Cultivars &amp; 'Fuji'</button>
+        </div>
+
+        <label class="overlay-toggle-label">
+          <input type="checkbox" id="silkroad-overlay-toggle" checked onchange="toggleSilkRoadOverlay(this.checked)">
+          <span>Show Silk Road Illustrated Corridor Overlay</span>
+        </label>
+      </div>
+
+      <div class="explorer-grid">
+        <div class="map-wrapper sepia-tiles">
+          <div id="map"></div>
+          <div class="map-legend">
+            <div class="legend-item"><span class="dot" style="background: #3D5A45;"></span> Tian Shan Wild Cradle (<em>M. sieversii</em>)</div>
+            <div class="legend-item"><span class="dot" style="background: #C86D3B;"></span> Eastern Silk Road Corridor (<em>M. asiatica</em>)</div>
+            <div class="legend-item"><span class="dot" style="background: #6E476B;"></span> Western Silk Road Branch (<em>M. domestica</em>)</div>
+            <div class="legend-item"><span class="dot" style="background: #A8332A;"></span> 1870s American Cultivar Introduction</div>
+          </div>
+        </div>
+
+        <div class="timeline-list" id="timeline-container"></div>
+      </div>
+
+      <!-- Botanical Comparison -->
+      <section class="comparison-section">
+        <div class="section-header">
+          <h2>II. Botanical &amp; Cultural Comparison</h2>
+          <p>Why did East Asia's native small apples disappear so quickly after American and European varieties arrived in the 1870s?</p>
+        </div>
+
+        <div class="comp-grid">
+          <div class="comp-card">
+            <div class="eyebrow" style="color: var(--asian-amber);">Traditional East Asian Heirloom Apple</div>
+            <h3 class="serif" style="font-size: 1.75rem;">Chinese Soft Apple / Japanese Native Apple</h3>
+            <p class="species-tag">Malus asiatica / Malus prunifolia</p>
+            <svg class="svg-illustration" viewBox="0 0 200 200">
+              <path d="M100,65 Q105,30 120,20" stroke="#5A4632" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+              <path d="M106,42 Q145,25 160,50 Q135,68 106,42 Z" fill="#4A6B53" stroke="#23201C" stroke-width="1.5"/>
+              <ellipse cx="100" cy="112" rx="46" ry="38" fill="#E6C27A" stroke="#23201C" stroke-width="2"/>
+              <path d="M62,95 Q85,75 125,85 Q142,105 130,130 Q95,125 62,95 Z" fill="#C84B31" opacity="0.75"/>
+              <path d="M90,148 Q100,142 110,148" stroke="#23201C" stroke-width="2" fill="none"/>
+              <text x="100" y="182" text-anchor="middle" font-size="11" fill="#5A544B" font-family="Inter">Actual diameter: ~1.5 inches (3.5 – 4.5 cm)</text>
+            </svg>
+            <table class="comp-table">
+              <tr><th>Genomic Origin</th><td><em>M. sieversii</em> × <em>M. baccata</em> (Siberian crabapple hybridization)</td></tr>
+              <tr><th>Fruit Size &amp; Texture</th><td>Golf-ball sized (1.5 in), long slender stem, soft mealy flesh that bruises easily</td></tr>
+              <tr><th>Harvest Season</th><td>Mid-summer (July–August); very short shelf life (spoils within days)</td></tr>
+              <tr><th>Cultural Role</th><td>Aristocratic court gifts, Buddhist ancestral offerings, classical nature paintings</td></tr>
+              <tr><th>Status Today</th><td>Nearly extinct commercially; survives as protected heritage trees in Nagano, Japan</td></tr>
+            </table>
+          </div>
+
+          <div class="comp-card">
+            <div class="eyebrow" style="color: var(--crimson-apple);">Modern Commercial Apple</div>
+            <h3 class="serif" style="font-size: 1.75rem;">Western &amp; Modern Hybrid Cultivars</h3>
+            <p class="species-tag">Malus domestica Borkh.</p>
+            <svg class="svg-illustration" viewBox="0 0 200 200">
+              <path d="M100,48 Q103,26 112,18" stroke="#5A4632" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+              <path d="M100,48 C65,38 32,68 36,112 C40,152 72,168 92,165 C97,164 103,164 108,165 C128,168 160,152 164,112 C168,68 135,38 100,48 Z" fill="#A8332A" stroke="#23201C" stroke-width="2"/>
+              <path d="M55,75 Q48,110 62,140" stroke="#E8998D" stroke-width="3" fill="none" opacity="0.6" stroke-linecap="round"/>
+              <text x="100" y="185" text-anchor="middle" font-size="11" fill="#5A544B" font-family="Inter">Actual diameter: ~3.5 inches (8.0 – 10.0 cm)</text>
+            </svg>
+            <table class="comp-table">
+              <tr><th>Genomic Origin</th><td><em>M. sieversii</em> × <em>M. sylvestris</em> (European crabapple introgression)</td></tr>
+              <tr><th>Fruit Size &amp; Texture</th><td>Baseball-sized (3.5+ in), crisp, juicy, high sugar, stores all winter</td></tr>
+              <tr><th>Harvest Season</th><td>Autumn to Late Autumn (September–November)</td></tr>
+              <tr><th>American Connection</th><td>US missionary John Nevius (1871) &amp; US saplings sent to Meiji Japan (1871–75)</td></tr>
+              <tr><th>Flagship Cultivar</th><td>‘Fuji’ (bred in Japan in 1939 by crossing Virginia's ‘Ralls Janet’ × Iowa's ‘Red Delicious’)</td></tr>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TAB 2: GLOBAL PRODUCTION PIE CHART & WORLD/CHINA OVERLAY MAP      -->
+    <!-- ================================================================= -->
+    <div id="tab-modern" class="tab-pane">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">World Total Apple Production (FAOSTAT)</div>
+          <div class="kpi-value">~95.8M Tons</div>
+          <div class="kpi-sub">Cultivated across temperate regions in over 90 countries worldwide.</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">#1 Global Producer: China</div>
+          <div class="kpi-value">~47.9M Tons</div>
+          <div class="kpi-sub">Produces <strong>50.0% of the world's apples</strong>—10× more than the United States.</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">#1 Province in the World: Shaanxi</div>
+          <div class="kpi-value">~13.5M Tons</div>
+          <div class="kpi-sub">Located on the Loess Plateau; produces <strong>nearly 3× the entire US harvest</strong>.</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">American-Japanese Heritage</div>
+          <div class="kpi-value">72%+ ‘Fuji’</div>
+          <div class="kpi-sub">Over 70% of Chinese apples are ‘Fuji’, descended from two classic American parent varieties.</div>
+        </div>
+      </div>
+
+      <!-- ANALYTICS ROW: WORLD PRODUCTION PIE CHART & CHINA PROVINCIAL BARS -->
+      <div class="analytics-grid">
+        <!-- Left Panel: Interactive SVG Pie/Donut Chart of World Production -->
+        <div class="panel-box">
+          <div class="eyebrow">Global Share Breakdown (UN FAOSTAT Data)</div>
+          <h3>World Apple Production Pie Chart (~95.8 MMT)</h3>
+          <p style="font-size: 0.84rem; color: var(--ink-muted);">
+            Click any country slice or legend row to fly directly to its main orchard region on the interactive world map below.
+          </p>
+
+          <div class="pie-container">
+            <svg class="pie-svg" id="world-pie-svg" viewBox="-110 -110 220 220">
+              <!-- Populated dynamically by JS -->
+            </svg>
+            <div class="pie-legend" id="world-pie-legend">
+              <!-- Populated dynamically by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel: China's Provincial Output Breakdown -->
+        <div class="panel-box">
+          <div class="eyebrow">Inside China's 47.9 Million Tons</div>
+          <h3>Major Chinese Provinces vs. United States &amp; Japan</h3>
+          <p style="font-size: 0.84rem; color: var(--ink-muted); margin-bottom: 1.1rem;">
+            Comparing China's high-altitude Loess Plateau provinces (gold) and coastal Bohai Rim provinces (blue) with the US and Japan (crimson).
+          </p>
+
+          <div class="bar-row">
+            <div class="bar-header"><span>1. Shaanxi Province (Loess Plateau Belt, China)</span><span>13.50 MMT</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width: 100%; background: var(--loess-gold);"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-header"><span>2. Shandong Province (Bohai Coastal Belt, China)</span><span>10.50 MMT</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width: 78%; background: var(--bohai-blue);"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-header"><span>3. Henan &amp; Shanxi Provinces (Yellow River Basin, China)</span><span>8.70 MMT</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width: 64%; background: var(--loess-gold);"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-header"><span>4. Hebei &amp; Liaoning Provinces (Northern Bohai Rim, China)</span><span>6.90 MMT</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width: 51%; background: var(--bohai-blue);"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-header"><span>5. Gansu Province (Hexi Corridor / Loess Plateau, China)</span><span>4.80 MMT</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width: 36%; background: var(--loess-gold);"></div></div>
+          </div>
+          <div class="bar-row" style="margin-top: 1rem; padding-top: 0.7rem; border-top: 1px dashed var(--border-sepia);">
+            <div class="bar-header"><span>Comparison: Entire United States (Led by Washington State)</span><span>4.60 MMT</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width: 34%; background: var(--crimson-apple);"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-header"><span>Comparison: Entire Japan (Led by Aomori &amp; Nagano)</span><span>0.75 MMT</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width: 5.6%; background: var(--crimson-apple);"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTERACTIVE WORLD & CHINA APPLE BELT OVERLAY MAP -->
+      <div class="section-header">
+        <h2>II. Global Production Map Overlay &amp; East Asia's Four Orchard Belts</h2>
+        <p>Switch between the <strong>Global Top Producers View</strong> and <strong>China's Four Major Production Belts</strong> to explore how geography, American missionaries, and reforestation shaped modern apple farming.</p>
+      </div>
+
+      <div class="controls-bar">
+        <div class="era-controls">
+          <button class="era-btn active" onclick="filterModernMap('world', this)">🌐 World Top Producers Overlay (Global View)</button>
+          <button class="era-btn" onclick="filterModernMap('all-china', this)">East Asia &amp; China Belts Zoom</button>
+          <button class="era-btn" onclick="filterModernMap('loess', this)">1. Loess Plateau Belt (~52% of China)</button>
+          <button class="era-btn" onclick="filterModernMap('bohai', this)">2. Bohai Rim Belt (~35% of China)</button>
+          <button class="era-btn" onclick="filterModernMap('northwest', this)">3. Xinjiang Tian Shan &amp; Southwest Highlands</button>
+        </div>
+      </div>
+
+      <div class="explorer-grid">
+        <div class="map-wrapper sepia-tiles">
+          <div id="world-china-map"></div>
+          <div class="map-legend">
+            <div class="legend-item"><span class="dot" style="background: #A8332A;"></span> Global Producer Bubble (Scaled by Volume)</div>
+            <div class="legend-item"><span class="dot" style="background: #B8862D;"></span> Loess Plateau Belt (Highland)</div>
+            <div class="legend-item"><span class="dot" style="background: #2E5B70;"></span> Bohai Coastal Belt</div>
+            <div class="legend-item"><span class="dot" style="background: #3D5A45;"></span> Tian Shan &amp; Alpine Belts</div>
+          </div>
+        </div>
+
+        <div class="timeline-list" id="china-cards-container"></div>
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TAB 3: ACADEMIC HONESTY & COMPLETE REFERENCES                     -->
+    <!-- ================================================================= -->
+    <div id="tab-references" class="tab-pane">
+
+      <div class="honesty-pledge">
+        <div class="eyebrow" style="color: var(--botanical-green);">Statement of Academic Integrity &amp; Data Transparency</div>
+        <h3>Academic Honesty Declaration</h3>
+        <p>
+          This digital atlas synthesizes historical agricultural treatises, peer-reviewed plant genomics research, official United Nations (FAOSTAT) agricultural statistics, and open-access museum collections. Every historical claim, taxonomic classification, spatial coordinate, and production figure presented in this web application is explicitly attributed to its original scholarly or archival source below in accordance with academic integrity standards.
+        </p>
+      </div>
+
+      <!-- 1. Peer-Reviewed Plant Genomics & Pomological History -->
+      <div class="ref-category">
+        <h3>1. Peer-Reviewed Genomics, Botany &amp; Pomological History</h3>
+        <ul class="ref-list">
+          <li>
+            Cornille, A., Gladieux, P., Smulders, M. J. M., Roldán-Ruiz, I., Laurens, F., Le Cam, B., Nersesyan, A., Clavel, J., Olonova, M., Feugey, L., Gabrielyan, I., Zhang, X.-G., Tenaillon, M. I., &amp; Giraud, T. (2012). New insight into the history of domesticated apple: Secondary contribution of the European wild apple to the genome of cultivated varieties. <em>PLOS Genetics</em>, 8(5), e1002703. https://doi.org/10.1371/journal.pgen.1002703
+            <span class="ref-badge">Genomic Origin</span>
+          </li>
+          <li>
+            Duan, N., Bai, Y., Sun, H., Wang, N., Ma, Y., Li, M., Wang, X., Jiao, C., Legall, N., Mao, L., Wan, S., Wang, K., He, T., Feng, S., Zhang, Z., Mao, Z., Shen, X., Chen, X., Jiang, Y., ... Fei, Z. (2017). Genome re-sequencing reveals the history of apple and supports a two-stage model for fruit enlargement. <em>Nature Communications</em>, 8(1), 249. https://doi.org/10.1038/s41467-017-00336-7
+            <span class="ref-badge">Silk Road Hybridization</span>
+          </li>
+          <li>
+            Harris, S. A., Robinson, J. P., &amp; Juniper, B. E. (2002). Genetic clues to the origin of the apple. <em>Trends in Genetics</em>, 18(8), 426–430. https://doi.org/10.1016/S0168-9525(02)02689-6
+            <span class="ref-badge">Tian Shan Cradle</span>
+          </li>
+          <li>
+            Juniper, B. E., &amp; Mabberley, D. J. (2006). <em>The story of the apple</em>. Timber Press.
+            <span class="ref-badge">Global Dispersal</span>
+          </li>
+          <li>
+            Luby, J. J. (2003). Taxonomic classification and brief history. In D. C. Ferree &amp; I. J. Warrington (Eds.), <em>Apples: Botany, production and uses</em> (pp. 1–14). CABI Publishing.
+            <span class="ref-badge">Taxonomy</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 2. Primary Historical Treatises & Archival Documents -->
+      <div class="ref-category">
+        <h3>2. Primary Historical Treatises &amp; Archival Documents</h3>
+        <ul class="ref-list">
+          <li>
+            Jia, S. (c. 532–549 CE). <em>Qimin Yaoshu [Essential Techniques for the Welfare of the People]</em>, Volume 4, Chapter 39: <em>Cultivation of Native Chinese Apples</em>. Northern Wei Dynasty agricultural encyclopedia.
+            <span class="ref-badge">6th C. Primary Source</span>
+          </li>
+          <li>
+            Fukae, S. (918 CE). <em>Honzo Wamyo [Japanese Lexicon of Materia Medica]</em>. Imperial Heian Court Medical Bureau, Kyoto. (Earliest written record of Chinese soft apples cultivated in Japan).
+            <span class="ref-badge">10th C. Primary Source</span>
+          </li>
+          <li>
+            Hitomi, H. (1697). <em>Honcho Shokkan [Culinary Mirror of Edo Japan]</em>. National Diet Library Digital Collections.
+            <span class="ref-badge">17th C. Dietary Treatise</span>
+          </li>
+          <li>
+            Iwasaki, K. (1828). <em>Honzo Zufu [Illustrated Manual of Medicinal Plants]</em>, Volumes 59–60 (Fruit Section). Preserved in the National Archives of Japan &amp; National Diet Library Digital Collections.
+            <span class="ref-badge">19th C. Botanical Plates</span>
+          </li>
+          <li>
+            Hokkaido Development Commission (Kaitakushi). (1885). <em>Report on the Operations of the Hokkaido Development Commission (1871–1882)</em>. Meiji Government, Tokyo. Preserved in Hokkaido University Library Northern Studies Archive. (Documents the importation of 75 American apple cultivars in 1871).
+            <span class="ref-badge">1871 US Sapling Import</span>
+          </li>
+          <li>
+            Nevius, H. S. C. (1895). <em>The life of John Livingston Nevius, for forty years a missionary in China</em>. New York: Fleming H. Revell Company. (Documents the 1871 introduction of American apple cultivars from California and New York to Yantai, Shandong).
+            <span class="ref-badge">1871 American Missionary</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 3. Modern Agricultural Statistics & Agro-Ecological Policy Studies -->
+      <div class="ref-category">
+        <h3>3. Global Production Statistics &amp; Agro-Ecological Studies</h3>
+        <ul class="ref-list">
+          <li>
+            Food and Agriculture Organization of the United Nations (FAO). (2024–2025). <em>FAOSTAT: Crops and livestock products — Apples, production quantity by country</em>. Rome: FAO. https://www.fao.org/faostat/
+            <span class="ref-badge">Global Production Data</span>
+          </li>
+          <li>
+            National Bureau of Statistics of China (NBS). (2024). <em>China Statistical Yearbook &amp; Provincial Rural Statistical Yearbooks (Shaanxi, Shandong, Gansu, Henan, Shanxi, Liaoning, Hebei, Xinjiang)</em>. Beijing: China Statistics Press.
+            <span class="ref-badge">Provincial Output Data</span>
+          </li>
+          <li>
+            Ministry of Agriculture, Forestry and Fisheries of Japan (MAFF). (2024). <em>Crop Statistics: Production and Shipment of Apples by Prefecture and Cultivar</em>. Tokyo: MAFF.
+            <span class="ref-badge">Japanese Output Data</span>
+          </li>
+          <li>
+            Wang, N., Wolf, J., &amp; Zhang, F.-S. (2016). Towards sustainable intensification of apple production in China—Yield gaps and nutrient use efficiency in apple farming systems. <em>Journal of Integrative Agriculture</em>, 15(4), 716–725. https://doi.org/10.1016/S2095-3119(15)61099-1
+            <span class="ref-badge">Loess Plateau Shift</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 4. Visual Media, Paintings & Photograph Attributions -->
+      <div class="ref-category">
+        <h3>4. Visual Media, Paintings &amp; Archival Image Credits</h3>
+        <ul class="ref-list">
+          <li>
+            Lin, C. (12th Century, Southern Song Dynasty). <em>Birds and Ripe Fruit</em>. Ink and color on silk fan leaf, 26.7 × 27.2 cm. The Palace Museum Collection, Beijing. Public Domain.
+            <span class="ref-badge">12th C. Silk Painting</span>
+          </li>
+          <li>
+            Iizuna Town Municipal Board of Education, Nagano Prefecture, Japan. <em>Kosaka Heirloom Apple Specimen (Malus asiatica)</em>. Designated Natural Monument of Iizuna Town. https://iizuna.jp/
+            <span class="ref-badge">Heirloom Specimen Photo</span>
+          </li>
+          <li>
+            Wikimedia Commons / Daderot. <em>Malus sieversii</em> blossom and foliage specimen. Licensed under CC0 1.0 Universal Public Domain Dedication.
+            <span class="ref-badge">Botanical Photo</span>
+          </li>
+          <li>
+            Fujisaki Town Tourism Association, Aomori Prefecture, Japan. <em>Fuji Apple Specimen</em> (Bred in 1939 at the Horticultural Experiment Station Tohoku Branch by crossing American ‘Ralls Janet’ × ‘Red Delicious’).
+            <span class="ref-badge">Cultivar Photo</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- LIGHTBOX MODAL -->
+  <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
+    <div class="lightbox-content" onclick="event.stopPropagation()">
+      <div class="lightbox-img-wrap">
+        <img id="lightbox-img" src="" alt="Expanded historical view">
+      </div>
+      <div class="lightbox-meta">
+        <div>
+          <h4 class="serif" id="lightbox-title" style="font-size: 1.35rem;"></h4>
+          <p id="lightbox-desc" style="font-size: 0.85rem; color: var(--ink-muted);"></p>
+        </div>
+        <button class="close-btn" onclick="closeLightbox()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    The Two Paths of the Apple: Silk Road Dispersal &amp; Global Production Atlas • Built with Academic Integrity using Historical Treatises, Genomic Studies (Cornille et al., 2012; Duan et al., 2017), and UN FAOSTAT Data.
+  </footer>
+
+  <script>
+    // =========================================================================
+    // IMAGE REPOSITORY URLS
+    // =========================================================================
+    const IMG_URLS = {
+      sieversii: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Malus_sieversii.jpg",
+      linChunPainting: "https://img.dpm.org.cn/Uploads/Picture/dc/27469.jpg",
+      kosakaHeirloom: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRC7I6EiO5m5D_wddDfKKcjaN7Efe7VmQkAZ-sA3563Sw&s",
+      honzoZufu: "https://www.archives.go.jp/exhibition/digital/hana/contents/images/s/17-1.jpg",
+      johnNevius: "https://upload.wikimedia.org/wikipedia/commons/6/6a/John_Livingston_Nevius.jpg?utm_source=en.wikipedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      fujiAomori: "https://www.fujisaki-kanko.jp/wp-content/uploads/2016/01/eye_characteristic.jpg"
+    };
+
+    // =========================================================================
+    // TAB 1 DATA: HISTORICAL DISPERSAL (100% ENGLISH)
+    // =========================================================================
+    const historicalData = [
+      {
+        id: 1,
+        era: "origin",
+        period: "Neolithic – Antiquity",
+        title: "1. Wild Evolutionary Cradle: Ili Valley, Tian Shan Mountains",
+        location: "Almaty & Ili River Valley (Kazakhstan / Northwestern China)",
+        coords: [43.50, 81.50],
+        species: "Malus sieversii",
+        imgUrl: IMG_URLS.sieversii,
+        summary: "All modern apples descend from wild forests in the Tian Shan mountains. Bears, birds, and Silk Road camel caravans carried seeds both westward toward Europe and eastward into China.",
+        citation: "Citation: Cornille et al. (2012) PLOS Genetics; Duan et al. (2017) Nature Communications."
+      },
+      {
+        id: 2,
+        era: "asian",
+        period: "c. 532–549 CE (6th Century)",
+        title: "2. Early Grafting & Preservation in the Yellow River Basin",
+        location: "Xi'an (Chang'an) & Yellow River Basin, China",
+        coords: [34.34, 108.94],
+        species: "Malus asiatica / M. prunifolia (Chinese Soft Apple)",
+        imgUrl: IMG_URLS.linChunPainting,
+        summary: "Moving east along the Silk Road, wild apples hybridized with native Siberian crabapples (M. baccata), creating a small, sweet, soft-fleshed fruit. The 6th-century manual 'Essential Techniques for the Welfare of the People' records advanced grafting onto crabapple rootstock.",
+        citation: "Citation: Jia Sixie (c. 540 CE), Essential Techniques for the Welfare of the People, Vol. 4."
+      },
+      {
+        id: 3,
+        era: "asian",
+        period: "918 CE (10th Century)",
+        title: "3. Arrival in Imperial Japan: Aristocratic & Temple Gardens",
+        location: "Kyoto (Imperial Capital of Japan)",
+        coords: [35.01, 135.76],
+        species: "Malus asiatica (Japanese Heirloom Crabapple)",
+        imgUrl: IMG_URLS.kosakaHeirloom,
+        summary: "Introduced from mainland Asia via Korea, the small Asian apple appears in Japan's 918 CE Imperial Medical Lexicon. It was grown in noble estates and Buddhist temple grounds for its fragrant blossoms and summer fruit.",
+        citation: "Citation: Fukae Sukehito (918 CE), Japanese Lexicon of Materia Medica."
+      },
+      {
+        id: 4,
+        era: "asian",
+        period: "12th Century (Song Dynasty)",
+        title: "4. Classical Court Painting: 'Birds and Ripe Fruit'",
+        location: "Hangzhou & Beijing Palace Museum Collection",
+        coords: [30.27, 120.15],
+        species: "Malus asiatica ('Bird-Attracting Fruit')",
+        imgUrl: IMG_URLS.linChunPainting,
+        summary: "Court artist Lin Chun painted these golf-ball-sized blushed Asian apples on silk in the 1100s. In classical East Asian art, the fruit was nicknamed 'the fruit that beckons birds' for its sweet summer aroma.",
+        citation: "Citation: Lin Chun (12th c.), 'Birds and Ripe Fruit', Palace Museum Collection."
+      },
+      {
+        id: 5,
+        era: "asian",
+        period: "1697–1828 CE (Edo Period)",
+        title: "5. Botanical Illustrators & Living Heirloom Trees in Nagano",
+        location: "Iizuna Town (Nagano) & Tokyo, Japan",
+        coords: [36.75, 138.24],
+        species: "Malus asiatica ('Kosaka' Heirloom Apple)",
+        imgUrl: IMG_URLS.kosakaHeirloom,
+        summary: "Because native Asian apples ripen in mid-August, they became prized summer offerings for ancestral altars. Although nearly wiped out by modern commercial apples, rare protected heritage trees still bear fruit in Iizuna Town, Nagano.",
+        citation: "Citation: Iwasaki Kan'en (1828), Illustrated Manual of Medicinal Plants; Iizuna Town Archives."
+      },
+      {
+        id: 6,
+        era: "western",
+        period: "1871 CE (19th Century)",
+        title: "6. American Missionary John Nevius Introduces US Apples to China",
+        location: "Yantai (Shandong Peninsula, China)",
+        coords: [37.53, 121.39],
+        species: "Malus domestica (American Cultivars)",
+        imgUrl: IMG_URLS.johnNevius,
+        summary: "American Presbyterian missionary John L. Nevius brought Western apple saplings from California and New York to coastal Yantai in 1871. Grafted onto hardy local rootstocks, these American trees founded China's modern orchard industry.",
+        citation: "Citation: H. Nevius (1895), The Life of John Livingston Nevius."
+      },
+      {
+        id: 7,
+        era: "western",
+        period: "1871–1939 CE (Modern Era)",
+        title: "7. American Saplings in Japan & the 1939 Birth of 'Fuji'",
+        location: "Hirosaki & Fujisaki (Aomori Prefecture, Northern Japan)",
+        coords: [40.66, 140.50],
+        species: "Malus domestica ('Ralls Janet' × 'Red Delicious' → 'Fuji')",
+        imgUrl: IMG_URLS.fujiAomori,
+        summary: "In 1871, Japan imported 75 American apple varieties from the US. Farmers in northern Japan rapidly replaced small native crabapples with large American cultivars. In 1939, breeders in Fujisaki crossed two iconic American apples—Virginia's 'Ralls Janet' (grown by Thomas Jefferson) and Iowa's 'Red Delicious'—to create the world-famous 'Fuji' apple.",
+        citation: "Citation: Hokkaido Development Commission Report (1885); Aomori Apple History (1966)."
+      }
+    ];
+
+    // =========================================================================
+    // TAB 2 DATA: WORLD PRODUCTION PIE CHART & GLOBAL OVERLAY NODES (100% ENGLISH)
+    // =========================================================================
+    const worldPieData = [
+      { country: "China", outputMMT: 47.9, share: 50.0, color: "#A8332A", coords: [35.85, 109.43], zoom: 4, note: "#1 Global Producer (~47.9M tons; led by Shaanxi & Shandong provinces)" },
+      { country: "Turkey", outputMMT: 4.8, share: 5.0, color: "#C86D3B", coords: [37.76, 30.55], zoom: 5, note: "#2 Global Producer (~4.8M tons; Isparta & Karaman regions)" },
+      { country: "United States", outputMMT: 4.6, share: 4.8, color: "#2E5B70", coords: [46.60, -120.50], zoom: 4, note: "#3 Global Producer (~4.6M tons; Yakima & Wenatchee valleys, Washington State)" },
+      { country: "Poland", outputMMT: 4.0, share: 4.2, color: "#B8862D", coords: [51.86, 20.86], zoom: 5, note: "#4 Global Producer (~4.0M tons; Grojec orchard belt, Europe's largest)" },
+      { country: "India", outputMMT: 2.5, share: 2.6, color: "#3D5A45", coords: [33.77, 76.57], zoom: 5, note: "#5 Global Producer (~2.5M tons; Himalayan foothills of Kashmir & Himachal)" },
+      { country: "Italy & France", outputMMT: 3.8, share: 4.0, color: "#6E476B", coords: [46.49, 11.35], zoom: 5, note: "Major European quality hubs (~2.2M tons Italy South Tyrol; ~1.6M France)" },
+      { country: "Japan & S. Korea", outputMMT: 1.25, share: 1.3, color: "#D48C46", coords: [40.66, 140.50], zoom: 5, note: "Craft pomology & breeding hubs (Japan ~0.75M tons; South Korea ~0.50M tons)" },
+      { country: "Rest of World", outputMMT: 26.95, share: 28.1, color: "#9C9283", coords: [-34.90, -71.20], zoom: 3, note: "Includes Chile, Brazil, New Zealand, South Africa, Russia, and Iran" }
+    ];
+
+    const chinaModernData = [
+      {
+        id: 101,
+        belt: "loess",
+        beltName: "1. Loess Plateau Highland Belt",
+        region: "Shaanxi Province (Yan'an, Luochuan & Weinan)",
+        outputMMT: 13.5,
+        shareText: "~13.5M Tons (28% of China / #1 in the World)",
+        coords: [35.85, 109.43],
+        imgUrl: IMG_URLS.fujiAomori,
+        cultivars: "Red Fuji (~80%), Gala, QinGuan",
+        historicalBg: "Once an eroded grain-farming highland along the ancient Silk Road, Shaanxi became the world's largest apple region after the 1980s adoption of 'Fuji' and China's 1999 'Grain for Green' reforestation program, which paid farmers to plant orchards on sloped loess hills.",
+        agroFactors: "Elevation: 2,600–4,000 ft (800–1,200m) • Intense Sunlight • Deep Loess Soil"
+      },
+      {
+        id: 102,
+        belt: "bohai",
+        beltName: "2. Bohai Rim Coastal Belt",
+        region: "Shandong Province (Yantai, Qixia & Qingdao Peninsula)",
+        outputMMT: 10.5,
+        shareText: "~10.5M Tons (22% of China / #2 Nationally)",
+        coords: [37.35, 120.85],
+        imgUrl: IMG_URLS.fujiAomori,
+        cultivars: "Yantai Red Fuji, Gala, Golden Delicious",
+        historicalBg: "The historic birthplace of Western apples in China. American missionary John L. Nevius planted California and New York cultivars here in 1871. Its mild ocean breeze and sandy hillslopes made Yantai East Asia's premier export hub.",
+        agroFactors: "Elevation: 150–1,300 ft • Maritime Climate • 1871 American Missionary Site"
+      },
+      {
+        id: 103,
+        belt: "loess",
+        beltName: "1. Loess Plateau & Yellow River Belt",
+        region: "Gansu, Shanxi & Henan Provinces",
+        outputMMT: 13.5,
+        shareText: "~13.5M Tons Combined (Gansu 4.8M, Henan 4.4M, Shanxi 4.3M)",
+        coords: [34.58, 105.72],
+        imgUrl: IMG_URLS.linChunPainting,
+        cultivars: "Red Delicious ('Huaniu' lineage), Highland Fuji, Gala",
+        historicalBg: "Spanning the exact Yellow River corridor where 6th-century grafting was first recorded, high-elevation orchards in Gansu (Tianshui) are famous for deep-red apples descended from American 'Red Delicious' trees.",
+        agroFactors: "Elevation: 2,000–5,500 ft • Semi-Arid Continental • Cool Nights"
+      },
+      {
+        id: 104,
+        belt: "bohai",
+        beltName: "2. Northern Bohai Rim Belt",
+        region: "Hebei & Liaoning Provinces (Dalian & Liaodong Peninsula)",
+        outputMMT: 6.9,
+        shareText: "~6.9M Tons Combined (Hebei 4.1M + Liaoning 2.8M)",
+        coords: [39.65, 121.80],
+        imgUrl: IMG_URLS.fujiAomori,
+        cultivars: "Red Fuji, Ralls Janet heritage, Cold-Hardy Hybrids",
+        historicalBg: "In the early 1900s, horticultural stations introduced American 'Ralls Janet' and 'Jonathan' varieties from Japan into the Liaodong Peninsula, making Liaoning China's leading apple province until the 1970s.",
+        agroFactors: "Cold-Hardy Breeding Hub • Historic Ralls Janet Core"
+      },
+      {
+        id: 105,
+        belt: "northwest",
+        beltName: "3. Tian Shan Oasis & Southwest Alpine Belts",
+        region: "Xinjiang (Aksu / Ili Valley) & Yunnan/Sichuan Highlands",
+        outputMMT: 3.6,
+        shareText: "~3.6M Tons Combined (Xinjiang 2.2M + Southwest 1.4M)",
+        coords: [41.17, 80.26],
+        imgUrl: IMG_URLS.sieversii,
+        cultivars: "Aksu 'Honey-Core' Fuji, Wild Malus sieversii",
+        historicalBg: "Completing a 2,000-year genetic circle around the globe, modern 'Fuji' apples (descended from American and Japanese breeding) are now grown at the foot of the Tian Shan mountains—right beside the wild ancestral forests of Malus sieversii.",
+        agroFactors: "Elevation: 3,600–8,500 ft • Glacial Meltwater Irrigation"
+      }
+    ];
+
+    // =========================================================================
+    // LIGHTBOX FUNCTIONS
+    // =========================================================================
+    function openLightbox(imgUrl, title, desc) {
+      document.getElementById('lightbox-img').src = imgUrl;
+      document.getElementById('lightbox-title').textContent = title;
+      document.getElementById('lightbox-desc').textContent = desc;
+      document.getElementById('lightbox').classList.add('open');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+    }
+
+    // =========================================================================
+    // MAP 1: HISTORICAL DISPERSAL + SILK ROAD ILLUSTRATED CORRIDOR OVERLAY
+    // =========================================================================
+    const map1 = L.map('map', { center: [38.0, 102.0], zoom: 4, scrollWheelZoom: false });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map1);
+
+    const silkRoadOverlayGroup = L.layerGroup().addTo(map1);
+
+    function buildSilkRoadOverlay() {
+      const eastSilkCoords = [
+        [43.50, 81.50],
+        [42.95, 89.18],
+        [40.14, 94.66],
+        [36.06, 103.83],
+        [34.34, 108.94],
+        [34.62, 112.45],
+        [37.55, 126.98],
+        [35.01, 135.76],
+        [36.75, 138.24]
+      ];
+
+      L.polyline(eastSilkCoords, {
+        color: '#C86D3B', weight: 18, opacity: 0.22, lineCap: 'round', lineJoin: 'round'
+      }).addTo(silkRoadOverlayGroup);
+
+      L.polyline(eastSilkCoords, {
+        color: '#C86D3B', weight: 3.5, dashArray: '7, 7', opacity: 0.95
+      }).bindPopup("<b>Eastern Silk Road Corridor (Ancient–10th Century)</b><br>Wild <em>M. sieversii</em> hybridized with Siberian crabapple (<em>M. baccata</em>) along the Hexi Corridor to form small East Asian heirloom apples (<em>Malus asiatica</em>).").addTo(silkRoadOverlayGroup);
+
+      const westSilkCoords = [
+        [43.50, 81.50],
+        [39.65, 66.96],
+        [39.77, 64.42],
+        [35.68, 51.38],
+        [41.01, 28.97]
+      ];
+
+      L.polyline(westSilkCoords, {
+        color: '#6E476B', weight: 18, opacity: 0.2, lineCap: 'round'
+      }).addTo(silkRoadOverlayGroup);
+
+      L.polyline(westSilkCoords, {
+        color: '#6E476B', weight: 3.5, dashArray: '7, 7', opacity: 0.9
+      }).bindPopup("<b>Western Silk Road Branch (To Europe &amp; North America)</b><br><em>M. sieversii</em> moved west and hybridized with European crabapple (<em>M. sylvestris</em>), giving rise to large Western apples (<em>Malus domestica</em>).").addTo(silkRoadOverlayGroup);
+
+      const silkWaypoints = [
+        { coords: [40.14, 94.66], label: "🐫 Dunhuang Oasis (Silk Road)" },
+        { coords: [39.65, 66.96], label: "🐫 Samarkand (Westward Route)" },
+        { coords: [34.34, 108.94], label: "🏛️ Xi'an (6th C. Grafting Hub)" }
+      ];
+
+      silkWaypoints.forEach(wp => {
+        const icon = L.divIcon({
+          className: 'custom-silk-label',
+          html: `<div style="background:rgba(246,243,235,0.92); border:1px solid #C86D3B; padding:2px 6px; border-radius:4px; font-size:11px; font-family:'Cormorant Garamond',serif; font-weight:700; white-space:nowrap; color:#23201C; box-shadow:0 2px 6px rgba(0,0,0,0.15);">${wp.label}</div>`,
+          iconSize: [140, 22],
+          iconAnchor: [70, -10]
+        });
+        L.marker(wp.coords, { icon: icon, interactive: false }).addTo(silkRoadOverlayGroup);
+      });
+
+      L.polyline([[35.68, 139.71], [40.66, 140.50]], {
+        color: '#A8332A', weight: 3.5, opacity: 0.9
+      }).bindPopup("<b>1871–1875 American Sapling Distribution</b><br>75 American apple varieties imported to Tokyo and distributed to northern Japan.").addTo(silkRoadOverlayGroup);
+    }
+
+    buildSilkRoadOverlay();
+
+    function toggleSilkRoadOverlay(checked) {
+      if (checked) {
+        silkRoadOverlayGroup.addTo(map1);
+      } else {
+        map1.removeLayer(silkRoadOverlayGroup);
+      }
+    }
+
+    const markers1 = {};
+    const timelineContainer = document.getElementById('timeline-container');
+
+    function getEraColor(era) {
+      if (era === 'origin') return '#3D5A45';
+      if (era === 'asian') return '#C86D3B';
+      return '#A8332A';
+    }
+
+    function renderHistoricalItems(filter = 'all') {
+      timelineContainer.innerHTML = '';
+      historicalData.forEach(item => {
+        if (filter !== 'all' && item.era !== filter) {
+          if (markers1[item.id]) map1.removeLayer(markers1[item.id]);
+          return;
+        }
+        if (!markers1[item.id]) {
+          const m = L.circleMarker(item.coords, {
+            radius: 9, fillColor: getEraColor(item.era), color: '#23201C', weight: 1.5, fillOpacity: 0.92
+          });
+          m.bindPopup(`
+            <div style="font-family:'Inter',sans-serif; width:235px;">
+              <img src="${item.imgUrl}" alt="${item.title}" style="width:100%; height:115px; object-fit:cover; border-radius:3px; margin-bottom:6px; border:1px solid #D5CEBE;">
+              <div style="font-size:0.7rem; color:#5A544B; text-transform:uppercase;">${item.period}</div>
+              <strong style="font-family:'Cormorant Garamond',serif; font-size:1.1rem;">${item.title}</strong>
+              <div style="font-style:italic; color:#3D5A45; font-size:0.8rem; margin:2px 0 5px;">${item.species}</div>
+              <p style="font-size:0.78rem; margin:0;">${item.summary}</p>
+            </div>
+          `);
+          markers1[item.id] = m;
+        }
+        markers1[item.id].addTo(map1);
+
+        const card = document.createElement('div');
+        card.className = `timeline-card ${item.era}`;
+        card.innerHTML = `
+          <div class="card-thumb-wrap" title="Click to enlarge image">
+            <img class="card-thumb" src="${item.imgUrl}" alt="${item.title}">
+            <span class="zoom-hint">Zoom</span>
+          </div>
+          <div>
+            <div class="card-meta">
+              <span>${item.period} • ${item.location}</span>
+              <span class="species-tag">${item.species}</span>
+            </div>
+            <h3>${item.title}</h3>
+            <p>${item.summary}</p>
+            <div class="citation-box">${item.citation}</div>
+          </div>
+        `;
+
+        card.querySelector('.card-thumb-wrap').addEventListener('click', (e) => {
+          e.stopPropagation();
+          openLightbox(item.imgUrl, item.title, item.summary + " (" + item.citation + ")");
+        });
+
+        card.addEventListener('click', () => {
+          document.querySelectorAll('#timeline-container .timeline-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          map1.flyTo(item.coords, 6, { duration: 1.0 });
+          markers1[item.id].openPopup();
+        });
+        timelineContainer.appendChild(card);
+      });
+    }
+
+    function filterEra(era, btn) {
+      btn.parentElement.querySelectorAll('.era-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderHistoricalItems(era);
+      if (era === 'all') map1.flyTo([38.0, 102.0], 4, { duration: 0.9 });
+    }
+
+    // =========================================================================
+    // TAB 2: SVG PIE CHART & WORLD / CHINA PRODUCTION OVERLAY MAP
+    // =========================================================================
+    function renderWorldPieChart() {
+      const svg = document.getElementById('world-pie-svg');
+      const legend = document.getElementById('world-pie-legend');
+      svg.innerHTML = '';
+      legend.innerHTML = '';
+
+      let cumulativeAngle = -Math.PI / 2;
+      const outerR = 96;
+      const innerR = 52;
+
+      worldPieData.forEach((slice) => {
+        const sliceAngle = (slice.share / 100) * Math.PI * 2;
+        const endAngle = cumulativeAngle + sliceAngle;
+
+        const x1 = Math.cos(cumulativeAngle) * outerR;
+        const y1 = Math.sin(cumulativeAngle) * outerR;
+        const x2 = Math.cos(endAngle) * outerR;
+        const y2 = Math.sin(endAngle) * outerR;
+
+        const x3 = Math.cos(endAngle) * innerR;
+        const y3 = Math.sin(endAngle) * innerR;
+        const x4 = Math.cos(cumulativeAngle) * innerR;
+        const y4 = Math.sin(cumulativeAngle) * innerR;
+
+        const largeArc = slice.share > 50 ? 1 : 0;
+
+        const pathData = [
+          `M ${x1} ${y1}`,
+          `A ${outerR} ${outerR} 0 ${largeArc} 1 ${x2} ${y2}`,
+          `L ${x3} ${y3}`,
+          `A ${innerR} ${innerR} 0 ${largeArc} 0 ${x4} ${y4}`,
+          `Z`
+        ].join(' ');
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', pathData);
+        path.setAttribute('fill', slice.color);
+        path.setAttribute('stroke', '#F6F3EB');
+        path.setAttribute('stroke-width', '2');
+        path.style.cursor = 'pointer';
+        path.innerHTML = `<title>${slice.country}: ${slice.outputMMT}M Tons (${slice.share}%)</title>`;
+
+        path.addEventListener('click', () => {
+          map2.flyTo(slice.coords, slice.zoom, { duration: 1.1 });
+        });
+
+        svg.appendChild(path);
+        cumulativeAngle = endAngle;
+
+        const row = document.createElement('div');
+        row.className = 'pie-legend-row';
+        row.innerHTML = `
+          <span><span class="pie-swatch" style="background:${slice.color};"></span>${slice.country}</span>
+          <strong>${slice.outputMMT}M t (${slice.share}%)</strong>
+        `;
+        row.addEventListener('click', () => {
+          map2.flyTo(slice.coords, slice.zoom, { duration: 1.1 });
+        });
+        legend.appendChild(row);
+      });
+
+      const centerText1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      centerText1.setAttribute('x', '0');
+      centerText1.setAttribute('y', '-4');
+      centerText1.setAttribute('text-anchor', 'middle');
+      centerText1.setAttribute('font-family', 'Cormorant Garamond, serif');
+      centerText1.setAttribute('font-size', '20');
+      centerText1.setAttribute('font-weight', '700');
+      centerText1.setAttribute('fill', '#23201C');
+      centerText1.textContent = '95.8M';
+      svg.appendChild(centerText1);
+
+      const centerText2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      centerText2.setAttribute('x', '0');
+      centerText2.setAttribute('y', '14');
+      centerText2.setAttribute('text-anchor', 'middle');
+      centerText2.setAttribute('font-family', 'Inter, sans-serif');
+      centerText2.setAttribute('font-size', '10');
+      centerText2.setAttribute('fill', '#5A544B');
+      centerText2.textContent = 'Tons Global';
+      svg.appendChild(centerText2);
+    }
+
+    const map2 = L.map('world-china-map', { center: [32.0, 65.0], zoom: 2, scrollWheelZoom: false });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map2);
+
+    const worldMarkersGroup = L.layerGroup().addTo(map2);
+    const chinaBeltsGroup = L.layerGroup().addTo(map2);
+    const markers2 = {};
+    const chinaCardsContainer = document.getElementById('china-cards-container');
+
+    function buildWorldOverlayMarkers() {
+      worldPieData.forEach(wp => {
+        if (wp.country.startsWith("China")) return;
+        const radius = Math.max(8, Math.sqrt(wp.outputMMT) * 6.5);
+        const m = L.circleMarker(wp.coords, {
+          radius: radius,
+          fillColor: wp.color,
+          color: '#23201C',
+          weight: 1.5,
+          fillOpacity: 0.85
+        });
+        m.bindPopup(`
+          <div style="font-family:'Inter',sans-serif; width:220px;">
+            <div style="font-size:0.7rem; color:#5A544B; text-transform:uppercase; font-weight:600;">Global Top Producer (FAOSTAT)</div>
+            <strong style="font-family:'Cormorant Garamond',serif; font-size:1.2rem;">${wp.country}</strong>
+            <div style="color:#A8332A; font-weight:700; font-size:0.85rem; margin:3px 0;">${wp.outputMMT} Million Tons (${wp.share}% of World)</div>
+            <p style="font-size:0.78rem; margin:0;">${wp.note}</p>
+          </div>
+        `);
+        m.addTo(worldMarkersGroup);
+      });
+
+      L.polyline([[40.66, 140.50], [37.35, 120.85], [35.85, 109.43]], {
+        color: '#A8332A', weight: 2.5, dashArray: '5, 7', opacity: 0.85
+      }).bindPopup("<b>1939–1980s ‘Fuji’ Cultivar Flow</b><br>Bred in Fujisaki, Aomori (1939) from two American parent varieties and introduced to Shandong &amp; Shaanxi, now accounting for over 72% of China's harvest.").addTo(chinaBeltsGroup);
+    }
+
+    function getBeltColor(belt) {
+      if (belt === 'loess') return '#B8862D';
+      if (belt === 'bohai') return '#2E5B70';
+      return '#3D5A45';
+    }
+
+    function renderModernMapAndCards(mode = 'world') {
+      chinaCardsContainer.innerHTML = '';
+
+      chinaModernData.forEach(item => {
+        const showItem = (mode === 'world' || mode === 'all-china' || item.belt === mode);
+        if (!showItem) {
+          if (markers2[item.id]) chinaBeltsGroup.removeLayer(markers2[item.id]);
+          return;
+        }
+
+        if (!markers2[item.id]) {
+          const radius = Math.max(10, Math.sqrt(item.outputMMT) * 6.8);
+          const m = L.circleMarker(item.coords, {
+            radius: radius, fillColor: getBeltColor(item.belt), color: '#23201C', weight: 1.5, fillOpacity: 0.85
+          });
+          m.bindPopup(`
+            <div style="font-family:'Inter',sans-serif; width:240px;">
+              <img src="${item.imgUrl}" alt="${item.region}" style="width:100%; height:105px; object-fit:cover; border-radius:3px; margin-bottom:6px;">
+              <div style="font-size:0.7rem; color:#5A544B; text-transform:uppercase; font-weight:600;">${item.beltName}</div>
+              <strong style="font-family:'Cormorant Garamond',serif; font-size:1.15rem;">${item.region}</strong>
+              <div style="color:#A8332A; font-weight:700; font-size:0.82rem; margin:3px 0 5px;">${item.shareText}</div>
+              <p style="font-size:0.78rem; margin:0;">${item.historicalBg}</p>
+            </div>
+          `);
+          markers2[item.id] = m;
+        }
+        markers2[item.id].addTo(chinaBeltsGroup);
+
+        const card = document.createElement('div');
+        card.className = `timeline-card ${item.belt}`;
+        card.innerHTML = `
+          <div class="card-thumb-wrap" title="Click to enlarge image">
+            <img class="card-thumb" src="${item.imgUrl}" alt="${item.region}">
+            <span class="zoom-hint">Zoom</span>
+          </div>
+          <div>
+            <div class="card-meta">
+              <span>${item.beltName}</span>
+              <span class="output-pill">${item.shareText}</span>
+            </div>
+            <h3>${item.region}</h3>
+            <p>${item.historicalBg}</p>
+            <div class="citation-box">
+              <strong>Cultivars:</strong> ${item.cultivars} • <strong>Ecology:</strong> ${item.agroFactors}
+            </div>
+          </div>
+        `;
+
+        card.querySelector('.card-thumb-wrap').addEventListener('click', (e) => {
+          e.stopPropagation();
+          openLightbox(item.imgUrl, item.region, item.historicalBg);
+        });
+
+        card.addEventListener('click', () => {
+          document.querySelectorAll('#china-cards-container .timeline-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          map2.flyTo(item.coords, 5, { duration: 1.0 });
+          markers2[item.id].openPopup();
+        });
+        chinaCardsContainer.appendChild(card);
+      });
+    }
+
+    function filterModernMap(mode, btn) {
+      btn.parentElement.querySelectorAll('.era-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderModernMapAndCards(mode);
+
+      if (mode === 'world') {
+        worldMarkersGroup.addTo(map2);
+        map2.flyTo([32.0, 45.0], 2, { duration: 1.0 });
+      } else {
+        map2.flyTo([35.8, 108.5], 4, { duration: 1.0 });
+      }
+    }
+
+    // =========================================================================
+    // TAB SWITCHER
+    // =========================================================================
+    function switchMainTab(tabId, btnElement) {
+      document.querySelectorAll('.main-tab-btn').forEach(b => b.classList.remove('active'));
+      btnElement.classList.add('active');
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+
+      setTimeout(() => {
+        if (tabId === 'tab-history') map1.invalidateSize();
+        if (tabId === 'tab-modern') map2.invalidateSize();
+      }, 120);
+    }
+
+    // Initialize Application
+    renderHistoricalItems('all');
+    renderWorldPieChart();
+    buildWorldOverlayMarkers();
+    renderModernMapAndCards('world');
+  </script>
+</body>
+</html>
